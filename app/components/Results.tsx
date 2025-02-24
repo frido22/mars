@@ -117,6 +117,28 @@ const Results = ({ answers }: ResultsProps) => {
             </div>
           </div>
         ))}
+
+        <div className="cyber-card p-6 mt-12">
+          <h3 className="cyber-text text-xl mb-4 glowing-text text-center">
+            Preview Your Life on Mars 🎥
+          </h3>
+          <div className="relative rounded-lg overflow-hidden cyber-border">
+            <video 
+              className="w-full h-auto"
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+            >
+              <source src="/video/omgmars.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
+          </div>
+          <p className="cyber-text text-center mt-4 text-sm opacity-80">
+            Get ready for your new life in this breathtaking Martian landscape!
+          </p>
+        </div>
       </div>
 
       <div className="flex justify-center mt-8">
