@@ -24,7 +24,7 @@ export default function Home() {
                 Mars Migration Survey 🚀
               </h1>
               <p className="text-xl mb-12 text-center cyber-text">
-                Ready to ditch Earth's problems for some fresh Martian ones? Take our quiz to discover your cosmic destiny!
+                Ready to ditch Earth&apos;s problems for some fresh Martian ones? Take our quiz to discover your cosmic destiny!
               </p>
               <Survey onComplete={handleSurveyComplete} />
             </>

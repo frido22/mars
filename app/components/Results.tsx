@@ -34,7 +34,7 @@ const Results = ({ answers }: ResultsProps) => {
         
         setResponses(data);
         setLoading(false);
-      } catch (err) {
+      } catch (_error) {
         setError('Failed to analyze your Mars readiness. Please try again.');
         setLoading(false);
       }
