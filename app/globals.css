@@ -4,11 +4,12 @@
 
 :root {
   --foreground-rgb: 255, 255, 255;
-  --background-start-rgb: 0, 0, 0;
-  --background-end-rgb: 20, 20, 40;
+  --background-start-rgb: 0, 0, 20;
+  --background-end-rgb: 20, 0, 40;
   --neon-red: #ff2d55;
   --neon-blue: #0ff;
   --neon-purple: #b537f2;
+  --cyber-yellow: #ffd700;
 }
 
 @keyframes gradientBG {
@@ -17,16 +18,50 @@
   100% { background-position: 0% 50%; }
 }
 
-@keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
+@keyframes glitch {
+  0% {
+    text-shadow: 0.05em 0 0 var(--neon-red), -0.05em -0.025em 0 var(--neon-blue),
+      -0.025em 0.05em 0 var(--neon-purple);
+  }
+  14% {
+    text-shadow: 0.05em 0 0 var(--neon-red), -0.05em -0.025em 0 var(--neon-blue),
+      -0.025em 0.05em 0 var(--neon-purple);
+  }
+  15% {
+    text-shadow: -0.05em -0.025em 0 var(--neon-red), 0.025em 0.025em 0 var(--neon-blue),
+      -0.05em -0.05em 0 var(--neon-purple);
+  }
+  49% {
+    text-shadow: -0.05em -0.025em 0 var(--neon-red), 0.025em 0.025em 0 var(--neon-blue),
+      -0.05em -0.05em 0 var(--neon-purple);
+  }
+  50% {
+    text-shadow: 0.025em 0.05em 0 var(--neon-red), 0.05em 0 0 var(--neon-blue),
+      0 -0.05em 0 var(--neon-purple);
+  }
+  99% {
+    text-shadow: 0.025em 0.05em 0 var(--neon-red), 0.05em 0 0 var(--neon-blue),
+      0 -0.05em 0 var(--neon-purple);
+  }
+  100% {
+    text-shadow: -0.025em 0 0 var(--neon-red), -0.025em -0.025em 0 var(--neon-blue),
+      -0.025em -0.05em 0 var(--neon-purple);
+  }
+}
+
+@keyframes scanline {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
 }
 
 @keyframes float {
-  0% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-  100% { transform: translateY(0px); }
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
 }
 
 body {
@@ -39,14 +74,43 @@ body {
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
   min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: repeating-linear-gradient(
+    transparent 0%,
+    rgba(0, 0, 0, 0.1) 50%,
+    transparent 100%
+  );
+  animation: scanline 10s linear infinite;
+  pointer-events: none;
+}
+
+.cyber-container {
+  position: relative;
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid var(--neon-red);
+  box-shadow: 0 0 20px var(--neon-red),
+              inset 0 0 20px var(--neon-red);
+  backdrop-filter: blur(5px);
 }
 
 .cyber-border {
   position: relative;
   border: 2px solid var(--neon-red);
-  box-shadow: 0 0 10px var(--neon-red),
-              inset 0 0 10px var(--neon-red);
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 20px var(--neon-red),
+              inset 0 0 20px var(--neon-red);
   overflow: hidden;
+  backdrop-filter: blur(5px);
 }
 
 .cyber-border::before {
@@ -62,9 +126,11 @@ body {
 }
 
 .cyber-text {
-  text-shadow: 0 0 5px var(--neon-red),
-               0 0 10px var(--neon-red),
-               0 0 15px var(--neon-red);
+  font-family: monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  animation: glitch 3s infinite;
+  position: relative;
 }
 
 .cyber-button {
@@ -73,15 +139,18 @@ body {
   border: 2px solid var(--neon-red);
   color: white;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 0.2em;
+  font-family: monospace;
   transition: all 0.3s ease;
   overflow: hidden;
+  backdrop-filter: blur(5px);
 }
 
 .cyber-button:hover {
   background: var(--neon-red);
   color: black;
-  box-shadow: 0 0 20px var(--neon-red);
+  box-shadow: 0 0 30px var(--neon-red);
+  transform: translateY(-2px);
 }
 
 .cyber-button::before {
@@ -105,16 +174,24 @@ body {
 }
 
 .progress-bar {
-  height: 8px;
-  background: rgba(255, 45, 85, 0.2);
-  border-radius: 4px;
+  height: 12px;
+  background: rgba(255, 45, 85, 0.1);
+  border: 2px solid var(--neon-red);
+  border-radius: 6px;
   overflow: hidden;
   position: relative;
+  box-shadow: 0 0 10px var(--neon-red);
 }
 
 .progress-bar-fill {
   height: 100%;
-  background: var(--neon-red);
+  background: linear-gradient(90deg, 
+    var(--neon-red) 0%,
+    var(--neon-purple) 50%,
+    var(--neon-red) 100%
+  );
+  background-size: 200% 100%;
+  animation: gradientBG 3s linear infinite;
   position: relative;
   border-radius: 4px;
 }
@@ -141,9 +218,64 @@ body {
 }
 
 .floating {
-  animation: float 3s ease-in-out infinite;
+  animation: float 6s ease-in-out infinite;
 }
 
 .glowing-text {
+  text-shadow: 0 0 10px var(--neon-red),
+               0 0 20px var(--neon-red),
+               0 0 30px var(--neon-red),
+               0 0 40px var(--neon-purple);
   animation: pulse 2s infinite;
+}
+
+.option-hover {
+  transition: all 0.3s ease;
+}
+
+.option-hover:hover {
+  transform: translateX(10px) scale(1.02);
+  background: rgba(255, 45, 85, 0.1);
+  box-shadow: 0 0 20px var(--neon-red);
+}
+
+.cyber-card {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid var(--neon-red);
+  box-shadow: 0 0 20px var(--neon-red);
+  backdrop-filter: blur(5px);
+  transition: all 0.3s ease;
+}
+
+.cyber-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 30px var(--neon-red);
+}
+
+.cyber-input {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid var(--neon-red);
+  color: white;
+  padding: 10px;
+  font-family: monospace;
+  letter-spacing: 0.1em;
+  transition: all 0.3s ease;
+}
+
+.cyber-input:focus {
+  outline: none;
+  box-shadow: 0 0 20px var(--neon-red);
+}
+
+.matrix-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.1;
+  background: linear-gradient(rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.2) 50%);
+  background-size: 100% 4px;
+  animation: scanline 10s linear infinite;
 }

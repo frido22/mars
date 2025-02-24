@@ -40,6 +40,41 @@ export async function POST(request: Request) {
       );
     }
 
+    const generatePrompt = (answers: string[], focus: string) => {
+      const answerSummary = answers.join('\n');
+      
+      switch(focus) {
+        case 'leave_earth':
+          return `Based on these survey answers about Mars:\n${answerSummary}\n\nGenerate a humorous explanation of why this person should leave Earth. Focus on their fears and current life situations. Keep it funny and light-hearted.`;
+        case 'why_mars':
+          return `Based on these survey answers about Mars:\n${answerSummary}\n\nGenerate a humorous explanation of why Mars is perfect for this person. Focus on their spiritual and financial motivations. Keep it funny and light-hearted.`;
+        case 'how_to':
+          return `Based on these survey answers about Mars:\n${answerSummary}\n\nGenerate a humorous explanation of how this person will get to Mars. Make it absurd and entertaining while referencing their survey answers. Keep it funny and light-hearted.`;
+        default:
+          return '';
+      }
+    };
+
+    const generateResponse = async (prompt: string) => {
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: "You are a humorous Mars travel advisor. Keep responses concise, funny, and entertaining."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        temperature: 0.8,
+        max_tokens: 200
+      });
+
+      return response.choices[0].message.content || '';
+    };
+
     // Group answers by category
     const fearAnswers = [
       answers.fear_crisis,
@@ -59,66 +94,25 @@ export async function POST(request: Request) {
       answers.money_challenges
     ].filter(Boolean);
 
-    const prompt = `Create a humorous and engaging response for someone interested in going to Mars. Their survey responses show the following motivations:
+    // Make three parallel calls for better performance
+    const [whyLeave, whyMars, howToGet] = await Promise.all([
+      generateResponse(generatePrompt(fearAnswers, 'leave_earth')),
+      generateResponse(generatePrompt([...spiritualAnswers, ...financialAnswers], 'why_mars')),
+      generateResponse(generatePrompt([...fearAnswers, ...spiritualAnswers, ...financialAnswers], 'how_to'))
+    ]);
 
-    Fear-based responses:
-    ${fearAnswers.map((answer, i) => `${i + 1}. ${answer}`).join('\n')}
+    console.log('Sending responses to client:', { whyLeave, whyMars, howToGet });
+    
+    return NextResponse.json({
+      whyLeave,
+      whyMars,
+      howToGet
+    });
 
-    Spiritual responses:
-    ${spiritualAnswers.map((answer, i) => `${i + 1}. ${answer}`).join('\n')}
-
-    Financial responses:
-    ${financialAnswers.map((answer, i) => `${i + 1}. ${answer}`).join('\n')}
-
-    Based on their responses, provide three separate sections:
-    1. A funny and exaggerated reason why they should leave Earth (incorporate their strongest fears or motivations)
-    2. An entertaining pitch for why Mars is perfect for them (based on their spiritual/financial motivations)
-    3. A completely made-up, humorous method of how they'll get to Mars
-
-    Keep each response under 150 words and maintain a light, playful tone. Focus on their dominant motivations (fear/spiritual/financial) in the responses.`;
-
-    console.log('Sending prompt to OpenAI:', prompt);
-
-    try {
-      const completion = await openai.chat.completions.create({
-        messages: [{ role: "user", content: prompt }],
-        model: "gpt-4o",
-        temperature: 0.8,
-      });
-
-      console.log('OpenAI response:', completion.choices[0]?.message);
-
-      if (!completion.choices[0]?.message?.content) {
-        throw new Error('No response content from OpenAI');
-      }
-
-      const response = completion.choices[0].message.content;
-      const parts = response.split('\n\n').filter(Boolean);
-
-      if (parts.length < 3) {
-        console.error('Invalid response format from OpenAI. Parts:', parts);
-        throw new Error('Invalid response format from OpenAI');
-      }
-
-      const result = {
-        whyLeave: parts[0].replace(/^1\.\s*/, ''),
-        whyMars: parts[1].replace(/^2\.\s*/, ''),
-        howToGet: parts[2].replace(/^3\.\s*/, ''),
-      };
-
-      console.log('Sending response to client:', result);
-      return NextResponse.json(result);
-    } catch (error) {
-      console.error('OpenAI API error:', error);
-      return NextResponse.json(
-        { error: 'Failed to generate response from AI' },
-        { status: 500 }
-      );
-    }
   } catch (error) {
-    console.error('Error in generate-response:', error);
+    console.error('Error generating response:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: 'Failed to generate response' },
       { status: 500 }
     );
   }

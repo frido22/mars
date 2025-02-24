@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
 
 export interface SurveyQuestion {
   id: string;
@@ -41,7 +40,7 @@ const surveyQuestions: SurveyQuestion[] = [
     options: [
       'Extremely concerned - I must act now',
       'Very concerned - I think about it often',
-      'Moderately concerned - It's on my mind',
+      'Moderately concerned - I\'m on my mind',
       'Slightly concerned - I take it as it comes',
       'Not concerned - I live in the present'
     ]
@@ -54,8 +53,8 @@ const surveyQuestions: SurveyQuestion[] = [
     options: [
       'Absolutely - My purpose drives everything',
       'Mostly - I often consider my calling',
-      'Sometimes - I'm still discovering it',
-      'Rarely - I'm more practical minded',
+      'Sometimes - I\'m still discovering it',
+      'Rarely - I\'m more practical minded',
       'Not at all - I make rational decisions'
     ]
   },
@@ -68,7 +67,7 @@ const surveyQuestions: SurveyQuestion[] = [
       'They strongly influence major decisions',
       'They provide general guidance',
       'They play a minor role',
-      'They don't influence my decisions'
+      'They don\'t influence my decisions'
     ]
   },
   {
@@ -78,7 +77,7 @@ const surveyQuestions: SurveyQuestion[] = [
     options: [
       'Yes, frequently and powerfully',
       'Yes, on important occasions',
-      'Sometimes, but I'm not sure',
+      'Sometimes, but I\'m not sure',
       'Rarely, if ever',
       'Never experienced this'
     ]
@@ -89,7 +88,7 @@ const surveyQuestions: SurveyQuestion[] = [
     category: 'Financial',
     question: 'How important is financial security and reward in your career decisions?',
     options: [
-      'It's my primary motivation',
+      'It\'s my primary motivation',
       'Very important, but not everything',
       'Equally important as other factors',
       'Somewhat important',
@@ -103,8 +102,8 @@ const surveyQuestions: SurveyQuestion[] = [
     options: [
       'They are the deciding factor',
       'They heavily influence my choice',
-      'They're one of several factors',
-      'They're a minor consideration',
+      'They\'re one of several factors',
+      'They\'re a minor consideration',
       'They rarely affect my decisions'
     ]
   },
@@ -117,94 +116,70 @@ const surveyQuestions: SurveyQuestion[] = [
       'Usually - If the reward is worth it',
       'Sometimes - Depends on the situation',
       'Rarely - I prefer stability',
-      'Never - Money isn't worth the risk'
+      'Never - Money isn\'t worth the risk'
     ]
   }
 ];
 
 interface SurveyProps {
-  onComplete: (answers: Record<string, string>) => void;
+  onComplete: (answers: string[]) => void;
 }
 
-export default function Survey({ onComplete }: SurveyProps) {
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
+const Survey = ({ onComplete }: SurveyProps) => {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState<string[]>([]);
 
   const handleAnswer = (answer: string) => {
-    const newAnswers = {
-      ...answers,
-      [surveyQuestions[currentQuestion].id]: answer
-    };
+    const newAnswers = [...answers, answer];
     setAnswers(newAnswers);
-
-    if (currentQuestion < surveyQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
+    
+    if (currentQuestionIndex < surveyQuestions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      console.log('Survey complete, sending answers:', newAnswers);
       onComplete(newAnswers);
     }
   };
 
-  const currentCategory = surveyQuestions[currentQuestion].category;
-  const progressPercentage = ((currentQuestion + 1) / surveyQuestions.length) * 100;
+  const currentQuestion = surveyQuestions[currentQuestionIndex];
+  const progress = ((currentQuestionIndex + 1) / surveyQuestions.length) * 100;
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="max-w-2xl mx-auto p-6"
-    >
-      <div className="mb-12">
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-sm font-medium text-red-400 cyber-text uppercase tracking-wider">Progress</span>
-          <span className="text-sm font-medium text-red-400 cyber-text">{Math.round(progressPercentage)}%</span>
-        </div>
-        <div className="progress-bar">
-          <motion.div
-            className="progress-bar-fill"
-            initial={{ width: 0 }}
-            animate={{ width: `${progressPercentage}%` }}
-            transition={{ duration: 0.5 }}
+    <div className="cyber-container p-8 rounded-lg max-w-2xl mx-auto floating">
+      <div className="mb-8">
+        <h2 className="cyber-text text-2xl mb-2 glowing-text">
+          {currentQuestion.category}
+        </h2>
+        <div className="progress-bar mb-4">
+          <div 
+            className="progress-bar-fill" 
+            style={{ width: `${progress}%` }}
           />
         </div>
+        <p className="cyber-text text-xl mb-6">
+          {currentQuestion.question}
+        </p>
       </div>
 
-      <motion.div
-        key={currentQuestion}
-        initial={{ x: 50, opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        exit={{ x: -50, opacity: 0 }}
-        className="space-y-8"
-      >
-        <div className="text-sm font-medium text-red-400 mb-2 cyber-text uppercase tracking-widest">
-          {currentCategory}
-        </div>
-        
-        <h2 className="text-2xl font-bold text-white cyber-text">
-          {surveyQuestions[currentQuestion].question}
-        </h2>
+      <div className="space-y-4">
+        {currentQuestion.options.map((option, index) => (
+          <button
+            key={index}
+            onClick={() => handleAnswer(option)}
+            className="cyber-button w-full p-4 text-left option-hover"
+          >
+            <span className="inline-block w-8 text-center mr-2 text-neon-red">
+              {String.fromCharCode(65 + index)}
+            </span>
+            {option}
+          </button>
+        ))}
+      </div>
 
-        <div className="space-y-4">
-          {surveyQuestions[currentQuestion].options.map((option, index) => (
-            <motion.button
-              key={option}
-              whileHover={{ scale: 1.02, x: 10 }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => handleAnswer(option)}
-              className="w-full p-4 text-left cyber-button rounded-lg group"
-            >
-              <span className="flex items-center">
-                <span className="inline-block w-6 h-6 border-2 border-red-500 rounded-full mr-3 group-hover:border-white transition-colors" />
-                {option}
-              </span>
-            </motion.button>
-          ))}
-        </div>
-
-        <div className="text-center text-red-400 cyber-text uppercase tracking-wider text-sm">
-          Question {currentQuestion + 1} of {surveyQuestions.length}
-        </div>
-      </motion.div>
-    </motion.div>
+      <div className="mt-6 text-sm text-center cyber-text">
+        Question {currentQuestionIndex + 1} of {surveyQuestions.length}
+      </div>
+    </div>
   );
-}
+};
+
+export default Survey;
