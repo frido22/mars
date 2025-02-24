@@ -59,8 +59,9 @@ export default function Results({ answers }: ResultsProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-2xl text-red-600 animate-bounce">
-          🚀 Calculating your cosmic destiny...
+        <div className="text-2xl text-red-400 cyber-text glowing-text flex items-center">
+          <span className="mr-3">🚀</span>
+          Calculating your cosmic destiny...
         </div>
       </div>
     );
@@ -68,14 +69,14 @@ export default function Results({ answers }: ResultsProps) {
 
   if (error) {
     return (
-      <div className="text-center text-red-600 p-6">
-        <h2 className="text-2xl font-bold mb-4">Houston, we have a problem!</h2>
-        <p>{error}</p>
+      <div className="text-center p-6">
+        <h2 className="text-2xl font-bold mb-4 cyber-text text-red-400">System Malfunction!</h2>
+        <p className="text-white mb-6">{error}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="mt-4 px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
+          className="cyber-button px-6 py-3 rounded-lg text-sm"
         >
-          Try Again
+          Reboot System
         </button>
       </div>
     );
@@ -83,8 +84,8 @@ export default function Results({ answers }: ResultsProps) {
 
   if (!response) {
     return (
-      <div className="text-center text-red-600">
-        Oops! Something went wrong with our Mars-o-meter!
+      <div className="text-center cyber-text text-red-400">
+        Mars-o-meter calibration error!
       </div>
     );
   }
@@ -93,9 +94,9 @@ export default function Results({ answers }: ResultsProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="max-w-2xl mx-auto p-6 space-y-8"
+      className="max-w-2xl mx-auto p-6 space-y-12"
     >
-      <h1 className="text-4xl font-bold text-red-600 text-center">
+      <h1 className="text-4xl font-bold text-center cyber-text text-red-400 floating">
         Your Mars Destiny Awaits! 🚀
       </h1>
 
@@ -103,39 +104,39 @@ export default function Results({ answers }: ResultsProps) {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white p-6 rounded-lg shadow-lg border-2 border-red-400"
+        className="cyber-border bg-black/50 p-6 rounded-lg"
       >
-        <h2 className="text-2xl font-bold mb-3">Why Leave Earth? 🌍</h2>
-        <p className="text-lg">{response.whyLeave}</p>
+        <h2 className="text-2xl font-bold mb-4 cyber-text text-red-400">Why Leave Earth? 🌍</h2>
+        <p className="text-lg text-white">{response.whyLeave}</p>
       </motion.div>
 
       <motion.div
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.4 }}
-        className="bg-white p-6 rounded-lg shadow-lg border-2 border-red-400"
+        className="cyber-border bg-black/50 p-6 rounded-lg"
       >
-        <h2 className="text-2xl font-bold mb-3">Why Mars? 🔴</h2>
-        <p className="text-lg">{response.whyMars}</p>
+        <h2 className="text-2xl font-bold mb-4 cyber-text text-red-400">Why Mars? 🔴</h2>
+        <p className="text-lg text-white">{response.whyMars}</p>
       </motion.div>
 
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.6 }}
-        className="bg-white p-6 rounded-lg shadow-lg border-2 border-red-400"
+        className="cyber-border bg-black/50 p-6 rounded-lg"
       >
-        <h2 className="text-2xl font-bold mb-3">Your Travel Plan 🛸</h2>
-        <p className="text-lg">{response.howToGet}</p>
+        <h2 className="text-2xl font-bold mb-4 cyber-text text-red-400">Your Travel Plan 🛸</h2>
+        <p className="text-lg text-white">{response.howToGet}</p>
       </motion.div>
 
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        className="mx-auto block mt-8 px-8 py-4 bg-red-600 text-white rounded-full text-xl font-bold hover:bg-red-700 transition-colors"
+        className="mx-auto block mt-12 px-8 py-4 cyber-button rounded-lg text-lg uppercase tracking-wider"
         onClick={() => window.location.reload()}
       >
-        Start New Mars Journey 🚀
+        Begin New Mars Journey 🚀
       </motion.button>
     </motion.div>
   );

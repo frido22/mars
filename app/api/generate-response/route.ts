@@ -32,25 +32,50 @@ export async function POST(request: Request) {
     }
 
     // Validate the answers object
-    if (!answers || !answers.motivation || !answers.concerns || !answers.knowledge) {
-      console.error('Missing required fields in answers:', answers);
+    if (!answers || Object.keys(answers).length === 0) {
+      console.error('Missing answers object:', answers);
       return NextResponse.json(
-        { error: 'Missing required survey answers' },
+        { error: 'Missing survey answers' },
         { status: 400 }
       );
     }
 
-    const prompt = `Create a humorous and engaging response for someone interested in going to Mars. Their survey responses:
-    - What excites them: ${answers.motivation}
-    - Their main concern: ${answers.concerns}
-    - Their knowledge level: ${answers.knowledge}
+    // Group answers by category
+    const fearAnswers = [
+      answers.fear_crisis,
+      answers.fear_survival,
+      answers.fear_regret
+    ].filter(Boolean);
 
-    Please provide three separate responses:
-    1. A funny reason why they should leave Earth (something exaggerated and humorous)
-    2. An entertaining pitch for why Mars is perfect for them (based on their motivation)
+    const spiritualAnswers = [
+      answers.spiritual_purpose,
+      answers.spiritual_values,
+      answers.spiritual_destiny
+    ].filter(Boolean);
+
+    const financialAnswers = [
+      answers.money_security,
+      answers.money_incentives,
+      answers.money_challenges
+    ].filter(Boolean);
+
+    const prompt = `Create a humorous and engaging response for someone interested in going to Mars. Their survey responses show the following motivations:
+
+    Fear-based responses:
+    ${fearAnswers.map((answer, i) => `${i + 1}. ${answer}`).join('\n')}
+
+    Spiritual responses:
+    ${spiritualAnswers.map((answer, i) => `${i + 1}. ${answer}`).join('\n')}
+
+    Financial responses:
+    ${financialAnswers.map((answer, i) => `${i + 1}. ${answer}`).join('\n')}
+
+    Based on their responses, provide three separate sections:
+    1. A funny and exaggerated reason why they should leave Earth (incorporate their strongest fears or motivations)
+    2. An entertaining pitch for why Mars is perfect for them (based on their spiritual/financial motivations)
     3. A completely made-up, humorous method of how they'll get to Mars
 
-    Keep each response under 150 words and maintain a light, playful tone.`;
+    Keep each response under 150 words and maintain a light, playful tone. Focus on their dominant motivations (fear/spiritual/financial) in the responses.`;
 
     console.log('Sending prompt to OpenAI:', prompt);
 
