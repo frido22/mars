@@ -6,30 +6,30 @@ import Survey from './components/Survey';
 import Results from './components/Results';
 
 export default function Home() {
-  const [surveyComplete, setSurveyComplete] = useState(false);
+  const [showSurvey, setShowSurvey] = useState(true);
   const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const handleSurveyComplete = (surveyAnswers: Record<string, string>) => {
     setAnswers(surveyAnswers);
-    setSurveyComplete(true);
+    setShowSurvey(false);
   };
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start min-h-screen bg-gradient-to-b from-red-50 to-orange-50">
         <div className="container mx-auto px-4 py-12">
-          {!surveyComplete ? (
+          {showSurvey ? (
             <>
-              <h1 className="text-5xl font-bold text-center text-red-600 mb-8">
-                🚀 Your Mars Adventure Awaits!
+              <h1 className="text-4xl font-bold mb-8 text-center cyber-text glowing-text">
+                Mars Migration Survey 🚀
               </h1>
-              <p className="text-xl text-center text-gray-700 mb-12">
+              <p className="text-xl mb-12 text-center cyber-text">
                 Ready to ditch Earth's problems for some fresh Martian ones? Take our quiz to discover your cosmic destiny!
               </p>
               <Survey onComplete={handleSurveyComplete} />
             </>
           ) : (
-            <Results answers={answers} />
+            <Results answers={Object.values(answers)} />
           )}
         </div>
       </main>

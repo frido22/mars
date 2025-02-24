@@ -24,7 +24,7 @@ const Results = ({ answers }: ResultsProps) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ answers }),
+          body: JSON.stringify({ answers: answers.map(answer => String(answer)) }),
         });
 
         if (!res.ok) throw new Error('Failed to generate response');

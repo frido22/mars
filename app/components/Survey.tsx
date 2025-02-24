@@ -122,15 +122,19 @@ const surveyQuestions: SurveyQuestion[] = [
 ];
 
 interface SurveyProps {
-  onComplete: (answers: string[]) => void;
+  onComplete: (answers: Record<string, string>) => void;
 }
 
 const Survey = ({ onComplete }: SurveyProps) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
 
   const handleAnswer = (answer: string) => {
-    const newAnswers = [...answers, answer];
+    const currentQuestion = surveyQuestions[currentQuestionIndex];
+    const newAnswers = {
+      ...answers,
+      [currentQuestion.id]: answer
+    };
     setAnswers(newAnswers);
     
     if (currentQuestionIndex < surveyQuestions.length - 1) {
